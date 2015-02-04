@@ -7,6 +7,7 @@
          (<= min-amount max-amount)
          (between? mutation-probability 0 1)
          (between? initial-amount min-amount max-amount)]}
+  ^{:type ::StatBlueprint}
   {:initial-amount initial-amount
    :min-amount min-amount
    :max-amount max-amount
@@ -20,6 +21,11 @@
          (number? amount)
          (not (nil? blueprint))
          (between? amount (blueprint :min-amount) (blueprint :max-amount))]}
+  ^{:type ::Stat}
   {:name name
    :amount amount
    :blueprint blueprint})
+
+(defn mutate-stat
+  [stat]
+  1)
