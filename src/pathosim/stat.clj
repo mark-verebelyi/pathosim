@@ -1,5 +1,7 @@
 (ns pathosim.stat
-  (:require [pathosim.preconditions :refer [numbers? between?]]))
+  (:require [pathosim.preconditions :refer [numbers? between?]]
+            [pathosim.log :refer [log]]
+            [pathosim.randoms :refer [random-int-between]]))
 
 (defn create-stat-blueprint
   [initial-amount min-amount max-amount mutation-probability min-mutation max-mutation]
@@ -28,4 +30,18 @@
 
 (defn mutate-stat
   [stat]
-  1)
+  (let [{:keys [name amount blueprint]} stat
+        {:keys [min-amount max-amount min-mutation max-mutation]} blueprint
+        mutation-amount (random-int-between min-mutation max-mutation)
+        new-proposed-amount (+ amount mutation-amount)
+        new-amount (cond
+                     (<= new-proposed-amount min-amount) min-amount
+                     (>= new-proposed-amount max-amount) max-amount
+                     :else new-proposed-amount)]
+    (log :DEBUG "Mutating pathogen [%s]" name)
+    (log :DEBUG "  Mutation amount must be          : [%s - %s]" min-mutation max-mutation)
+    (log :DEBUG "  Amount must be                   : [%s - %s]" min-amount max-amount)
+    (log :DEBUG "  Random mutation amount is        : [%s]" mutation-amount)
+    (log :DEBUG "  New proposed amount is           : [%s]" new-proposed-amount)
+    (log :DEBUG "  New amount considering bounds is : [%s]" new-amount)
+    (create-stat name new-amount blueprint)))

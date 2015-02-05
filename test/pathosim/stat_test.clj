@@ -1,6 +1,9 @@
 (ns pathosim.stat-test
   (:require [clojure.test :refer :all]
-            [pathosim.stat :refer :all]))
+            [pathosim.stat :refer :all]
+            [clojure.test.check.generators :as gen]
+            [clojure.test.check.properties :as prop]
+            [clojure.test.check.clojure-test :refer [defspec]]))
 
 (deftest test-create-stat-blueprint
   (testing "valid instance"
