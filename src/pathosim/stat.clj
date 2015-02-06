@@ -18,15 +18,17 @@
    :max-mutation max-mutation})
 
 (defn create-stat
-  [name amount blueprint]
-  {:pre [(not (nil? name))
-         (number? amount)
-         (not (nil? blueprint))
-         (between? amount (blueprint :min-amount) (blueprint :max-amount))]}
-  ^{:type ::Stat}
-  {:name name
-   :amount amount
-   :blueprint blueprint})
+  ([name blueprint]
+    (create-stat name (:initial-amount blueprint) blueprint))
+  ([name amount blueprint]
+    {:pre [(not (nil? name))
+           (not (nil? blueprint))
+           (number? amount)
+           (between? amount (blueprint :min-amount) (blueprint :max-amount))]}
+    ^{:type ::Stat}
+    {:name name
+    :amount amount
+    :blueprint blueprint}))
 
 (defn mutate-stat
   [stat]
@@ -38,7 +40,7 @@
                      (<= new-proposed-amount min-amount) min-amount
                      (>= new-proposed-amount max-amount) max-amount
                      :else new-proposed-amount)]
-    (log :DEBUG "Mutating pathogen [%s]" name)
+    (log :DEBUG "Mutating stat [%s]" name)
     (log :DEBUG "  Original amount is               : [%s]" amount)
     (log :DEBUG "  Mutation amount must be          : [%s - %s]" min-mutation max-mutation)
     (log :DEBUG "  Amount must be                   : [%s - %s]" min-amount max-amount)
@@ -46,5 +48,15 @@
     (log :DEBUG "  New proposed amount is           : [%s]" new-proposed-amount)
     (log :DEBUG "  New amount considering bounds is : [%s]" new-amount)
     (create-stat name new-amount blueprint)))
+
+(defn should-mutate-stat?
+  [stat luck]
+  (let [{name :name {mutation-probability :mutation-probability} :blueprint} stat
+        should-mutate (<= luck mutation-probability)]
+    (log :DEBUG "Deciding whether stat should be mutated [%s]" name)
+    (log :DEBUG "  Mutation probability : [%s]" mutation-probability)
+    (log :DEBUG "  Luck                 : [%s]" luck)
+    (log :DEBUG "  Should mutate        : [%s]" (if should-mutate "Yes" "No"))
+    should-mutate))
 
 
