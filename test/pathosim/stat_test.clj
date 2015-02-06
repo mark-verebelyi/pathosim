@@ -58,3 +58,23 @@
       (testing "amount must be between blueprint's min-amount and max-amount"
         (is (thrown? AssertionError (create-stat :some-stat -10 blueprint)))
         (is (thrown? AssertionError (create-stat :some-stat 110 blueprint))))))
+
+(defspec test-mutate-stat 1000
+         (prop/for-all [min-amount (gen/elements (range 0 51))
+                        max-amount (gen/elements (range 50 101))
+                        min-mutation (gen/elements (range -100 21))
+                        max-mutation (gen/elements (range 20 201))]
+                       (let [blueprint (create-stat-blueprint min-amount min-amount max-amount 0.1 min-mutation max-mutation)
+                             original-amount (if (= min-amount max-amount)
+                                      min-amount
+                                      (rand-nth (range min-amount max-amount)))
+                             stat (create-stat :whatever original-amount blueprint)
+                             mutated-stat (mutate-stat stat)
+                             new-amount (mutated-stat :amount)]
+                         (<= (min
+                               (+ original-amount min-mutation)
+                               min-amount)
+                             new-amount
+                             (max
+                               (+ original-amount max-mutation)
+                               max-amount)))))

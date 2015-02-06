@@ -39,9 +39,12 @@
                      (>= new-proposed-amount max-amount) max-amount
                      :else new-proposed-amount)]
     (log :DEBUG "Mutating pathogen [%s]" name)
+    (log :DEBUG "  Original amount is               : [%s]" amount)
     (log :DEBUG "  Mutation amount must be          : [%s - %s]" min-mutation max-mutation)
     (log :DEBUG "  Amount must be                   : [%s - %s]" min-amount max-amount)
     (log :DEBUG "  Random mutation amount is        : [%s]" mutation-amount)
     (log :DEBUG "  New proposed amount is           : [%s]" new-proposed-amount)
     (log :DEBUG "  New amount considering bounds is : [%s]" new-amount)
     (create-stat name new-amount blueprint)))
+
+
