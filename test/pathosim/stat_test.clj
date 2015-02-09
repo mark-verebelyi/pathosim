@@ -78,3 +78,10 @@
                              (max
                                (+ original-amount max-mutation)
                                max-amount)))))
+
+(deftest test-find-stat
+  (let [stats [virulence infectivity basic-reproduction-number]]
+    (testing "found"
+      (is (identical? basic-reproduction-number (find-stat stats :basic-reproduction-number))))
+    (testing "not found"
+      (is (nil? (find-stat stats :whatever))))))
